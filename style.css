@@ -1,5 +1,7 @@
 body{
     background-color: rgb(225, 225, 255);
+    padding: 0px;
+    margin: 0px;
 }
 form{
 
@@ -8,6 +10,7 @@ border: 1px solid black;
 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 padding: 10px;
 background-color: white;
+margin: 0;
 }
 
 fieldset{
@@ -20,6 +23,8 @@ fieldset{
 .container{
     display: flex;
     justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 
@@ -39,9 +44,7 @@ fieldset{
     height: 27px;
 }
 
-.wrapper{
-    width:300px
-}
+
 
 
 .count{
@@ -83,9 +86,20 @@ legend{
 
 @media  (max-width: 550px) {
   form{
-    width:80vw;
+    width:100vw;
   }
-.wrapper{
-    width:270px
+
 }
+
+
+
+@media  (max-width: 340px) {
+label{ 
+width:125px;   
+}
+
+.userLabel{
+  width:188px;   
+}
+ 
 }

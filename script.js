@@ -64,6 +64,7 @@ function renderTypes(formEl, types) {
 
         plusBtn.addEventListener('click',(e)=>{
 count.value=Number(count.value)+1;
+
 if(count.value>10)
 {
     count.value=10;
