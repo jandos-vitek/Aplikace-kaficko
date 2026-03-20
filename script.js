@@ -1,34 +1,70 @@
-const url = "http://lmpss3.dev.spsejecna.net/procedure.php";
+const url = "https://crm.skch.cz/ajax0/procedure2.php";
+
+
+  function make_base_auth(user, password) {
+  return "Basic " + btoa(user + ":" + password);
+}
+const username = "coffe";
+const password = "kafe";
+const PRIHLASOVANI = make_base_auth(username, password);
+
 
 async function getTypesList(apiUrl) {
     const res = await fetch(`${apiUrl}?cmd=getTypesList`, { 
         method: 'GET', 
-        credentials: 'include' 
+        credentials: 'include',
+        headers: {
+      'Authorization': PRIHLASOVANI
+    }
     });
 
     if (!res.ok) throw new Error(`getTypesList HTTP ${res.status}`);
     return await res.json();
 }
 
+
+
+
+
 async function getPeopleList(apiUrl) {
     const res = await fetch(`${apiUrl}?cmd=getPeopleList`, { 
         method: 'GET', 
-        credentials: 'include' 
+        credentials: 'include',
+           headers: {
+      'Authorization': PRIHLASOVANI
+    }
     });
 
     if (!res.ok) throw new Error(`getPeopleList HTTP ${res.status}`);
     return await res.json();
 }
 
+
+
+
+
+
+
 function renderPeople(formEl, people) {
     const fieldset = el('fieldset', {},
         el('legend', {}, 'Uživatel')
     );
 
+const allCookies = decodeURIComponent(document.cookies);
+const cookieArray = allCookies.split('; ');
+const lastUserId = 0;
+
+cookieArray.forEach(cookie=>{
+if(cookie.indexOf('lastUserId')==0){
+lastUserId=cookie.substring(11);
+}
+});
+
+
     Object.values(people).forEach(p => {
         const id = String(p.name);
         const radio = el('input', { 
-            type: 'radio', id, name: 'user', value: String(p.ID), class: 'radio', required: true
+            type: 'radio', id, name: 'user', value: String(p.ID), class: 'radio', required: true, checked: String(p.ID)==lastUserId
         });
         const label = el('label', { htmlFor: id, class: 'userLabel' }, p.name);
 
@@ -40,6 +76,8 @@ function renderPeople(formEl, people) {
 
     formEl.insertBefore(fieldset, formEl.firstChild);
 }
+
+
 
 
 
@@ -65,9 +103,9 @@ function renderTypes(formEl, types) {
         plusBtn.addEventListener('click',(e)=>{
 count.value=Number(count.value)+1;
 
-if(count.value>10)
+if(count.value>9)
 {
-    count.value=10;
+    count.value=9;
 }
 });
         minusBtn.addEventListener('click',(e)=>{
@@ -83,6 +121,10 @@ if(count.value<0)
 
     formEl.insertBefore(fieldset, formEl.firstChild);
 }
+
+
+
+
 
 
 
@@ -102,11 +144,79 @@ window.addEventListener('DOMContentLoaded', async (e)=>{
     const output = document.querySelector('#output1');
     if (output) output.textContent = 'Nepodařilo se načíst typy.';
 }
+
+
+
+
+document.getElementById("myForm").addEventListener("submit", async function(e) {
+    e.preventDefault(); 
+
+
+const payload = {
+user: null,
+drinks: []
+}
+
+const drink = {
+type: null,
+value: null
+}
+
+payload.user=returnUserId();
+
+
+ const inputs = document.querySelectorAll('.count');
+    const labels =document.querySelectorAll('.typeLabel'); 
+
+let sum =0;
+    for (let i =0;i<inputs.length;i++) {
+ const drink = { 
+    type: labels[i].textContent,
+    value: inputs[i].value
+  };
+  sum+=Number(inputs[i].value);
+    payload.drinks.push(drink);
+    }
+    if(sum==0){
+        window.alert("Alespon jeden drink musi byt vic nez nula");
+    }
+    else{
+
+console.log(JSON.stringify(payload));
+
+
+await fetch(url+'?cmd=saveDrinks', {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        'Authorization':PRIHLASOVANI
+    },
+    body: JSON.stringify(payload)
+})
+    }
+    
+    document.cookie=`lastUserId=${payload.user}; path=/`;
+
+});
+
+
 });
 
 
 
 
+function returnUserId()
+{
+    const radios = document.querySelectorAll('.radio');
+let sum =0;
+    for (const radio of radios) {
+        if (radio.checked) {
+            sum+=radio.value;
+            return radio.value;
+        }
+    }
+    return null;
+}
 
 
 
@@ -129,3 +239,9 @@ window.addEventListener('DOMContentLoaded', async (e)=>{
     });
     return node;
   }
+
+
+ 
+
+
+
