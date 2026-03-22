@@ -1,6 +1,8 @@
 const url = "https://crm.skch.cz/ajax0/procedure2.php";
 
 
+let interval=null;
+
   function make_base_auth(user, password) {
   return "Basic " + btoa(user + ":" + password);
 }
@@ -50,9 +52,9 @@ function renderPeople(formEl, people) {
         el('legend', {}, 'Uživatel')
     );
 
-const allCookies = decodeURIComponent(document.cookies);
+const allCookies = decodeURIComponent(document.cookie);
 const cookieArray = allCookies.split('; ');
-const lastUserId = 0;
+let lastUserId = 0;
 
 cookieArray.forEach(cookie=>{
 if(cookie.indexOf('lastUserId')==0){
@@ -157,10 +159,7 @@ user: null,
 drinks: []
 }
 
-const drink = {
-type: null,
-value: null
-}
+
 
 payload.user=returnUserId();
 
@@ -170,7 +169,7 @@ payload.user=returnUserId();
 
 let sum =0;
     for (let i =0;i<inputs.length;i++) {
- const drink = { 
+const drink = { 
     type: labels[i].textContent,
     value: inputs[i].value
   };
@@ -184,7 +183,7 @@ let sum =0;
 
 console.log(JSON.stringify(payload));
 
-
+try{
 await fetch(url+'?cmd=saveDrinks', {
     method: "POST",
     headers: {
@@ -192,10 +191,25 @@ await fetch(url+'?cmd=saveDrinks', {
         'Authorization':PRIHLASOVANI
     },
     body: JSON.stringify(payload)
-})
-    }
-    
-    document.cookie=`lastUserId=${payload.user}; path=/`;
+});
+}catch{
+addToLocalStorage(payload);
+console.log(interval);
+if(!interval){
+interval =setInterval(trySending,4000);
+}
+}
+
+
+
+   document.cookie=`lastUserId=${payload.user}; path=/`;
+
+const message =document.getElementById('succesfulSubmition');
+
+message.style.color='green';
+
+setTimeout(()=>{message.style.color='transparent'},1500);
+}
 
 });
 
@@ -219,7 +233,43 @@ let sum =0;
 }
 
 
+function addToLocalStorage(payload){
 
+const saved=JSON.parse(localStorage.getItem('drinks')||'[]')
+  console.log(`pred ulozenim ${localStorage.getItem('drinks')||'[]'}`);
+saved.push(payload)
+localStorage.setItem('drinks',JSON.stringify(saved));
+  console.log(`po ulozeni ${localStorage.getItem('drinks')||'[]'}`);
+}
+
+async function trySending() {
+    const saved = JSON.parse(localStorage.getItem('drinks'));
+    const failed = [];
+    for (const payload of saved) {
+        try {
+            const res = await fetch(url + '?cmd=saveDrinks', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': PRIHLASOVANI
+                },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                console.log('uspesne odeslano');
+            }
+        } catch {
+            failed.push(payload);
+            console.log('nepodarilo se');
+        }
+    }
+
+    localStorage.setItem('drinks', JSON.stringify(failed));
+    if (failed.length === 0) {
+        clearInterval(interval);
+        interval = null;
+    }
+}
 
 
  function el(tag, props = {}, ...children) {
