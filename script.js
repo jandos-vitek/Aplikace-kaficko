@@ -184,7 +184,7 @@ const drink = {
 console.log(JSON.stringify(payload));
 
 try{
-await fetch(url+'?cmd=saveDrinks', {
+const res = await fetch(url+'?cmd=saveDrinks', {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
@@ -192,6 +192,15 @@ await fetch(url+'?cmd=saveDrinks', {
     },
     body: JSON.stringify(payload)
 });
+if(res.ok){
+document.cookie=`lastUserId=${payload.user}; path=/`;
+
+const message =document.getElementById('succesfulSubmition');
+
+message.style.color='green';
+
+setTimeout(()=>{message.style.color='transparent'},1500);
+}
 }catch{
 addToLocalStorage(payload);
 console.log(interval);
@@ -199,16 +208,6 @@ if(!interval){
 interval =setInterval(trySending,4000);
 }
 }
-
-
-
-   document.cookie=`lastUserId=${payload.user}; path=/`;
-
-const message =document.getElementById('succesfulSubmition');
-
-message.style.color='green';
-
-setTimeout(()=>{message.style.color='transparent'},1500);
 }
 
 });

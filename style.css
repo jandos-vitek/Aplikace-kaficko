@@ -1,6 +1,5 @@
 body{
-background-color: rgb(231, 243, 255);
-    padding: 0px;
+background-color: rgb(186, 204, 255);
     margin: 0px;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
@@ -14,8 +13,9 @@ align-items: center;
 padding: 20px;
 border-radius: 15px;
 background-color: white;
-box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+box-shadow: 5px 2px 20px rgba(0,0,0,0.1);
 margin: 0;
+box-sizing: border-box;
 }
 
 fieldset{
@@ -24,19 +24,16 @@ fieldset{
         flex-direction: column;
         align-items: center;
 }
-.background{
-  height: 100vh;
-  width: 100vw;
-}
+
 
 .container{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+height: 100vh;
+    width: 100vw;
     background-color: transparent;
-    gap: 20px;
 }
 
 
@@ -102,25 +99,40 @@ legend{
   font-size: 24px;
   border: none;
   background-color: transparent;
-
+margin-top: 7px;
 }
 
-@media  (max-width: 550px) {
-  form{
-    width:100vw;
-  }
+@media  (max-width: 510px) {
+form{
+  margin-top: 30px;
+  width: 100%;
+  border-radius: 0px;
 
 }
+.count{ 
+ font-size: 24px;
+}
 
-
-
-@media  (max-width: 340px) {
+.submit{
+  width: 90%;
+}
+.container{
+  margin-top: 0px;
+}
 label{ 
-width:125px;   
+width:135px; 
+font-size: 22px;  
 }
 
 .userLabel{
-  width:188px;   
+  width:198px;   
+  font-size: 22px;  
 }
- 
+legend{
+
+    font-size: 24px;
+
+
+}
+
 }
