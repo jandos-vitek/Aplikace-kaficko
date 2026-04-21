@@ -196,11 +196,15 @@ if(res.ok){
 document.cookie=`lastUserId=${payload.user}; path=/`;
 
 const message =document.getElementById('succesfulSubmition');
-
+message.innerHTML='Odesláno';
 message.style.color='green';
-
-setTimeout(()=>{message.style.color='transparent'},1500);
+setTimeout(()=>{message.style.color='transparent'},4000);
+inputs.forEach(input => {
+    input.value = 0;
+  });
 }
+
+
 }catch{
 addToLocalStorage(payload);
 console.log(interval);
@@ -239,6 +243,16 @@ const saved=JSON.parse(localStorage.getItem('drinks')||'[]')
 saved.push(payload)
 localStorage.setItem('drinks',JSON.stringify(saved));
   console.log(`po ulozeni ${localStorage.getItem('drinks')||'[]'}`);
+
+  const message =document.getElementById('succesfulSubmition');
+
+message.style.color='rgb(175, 46, 53)';
+message.innerHTML='Nelze odeslat, uloženo';
+
+setTimeout(()=>{message.style.color='transparent'},4000);
+ document.querySelectorAll('.count').forEach(input => {
+    input.value = 0;
+  });
 }
 
 async function trySending() {
@@ -264,8 +278,12 @@ async function trySending() {
     }
 
     localStorage.setItem('drinks', JSON.stringify(failed));
-    if (failed.length === 0) {
+    if (failed.length == 0) {
         clearInterval(interval);
+          const message =document.getElementById('succesfulSubmition');
+message.innerHTML='Vše uložené odesláno';
+message.style.color='rgb(252, 208, 12)';
+setTimeout(()=>{message.style.color='transparent'},4000);
         interval = null;
     }
 }
